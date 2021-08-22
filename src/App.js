@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SingupPage";
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
+import PreviousOrders from "./pages/PreviousOrdersPage";
 import React from "react";
 import PrivateRoute from "./components/PrivateRouter";
 import AdminRoute from "./components/AdminRouter";
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/signup" component={SignupPage} />
           <PrivateRoute exact path="/" component={HomePage} />
+          <PrivateRoute exact path="/orders" component={PreviousOrders} />
           <AdminRoute exact path="/admin" component={AdminPage} />
         </Switch>
       </Router>

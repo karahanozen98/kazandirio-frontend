@@ -3,22 +3,29 @@ import colors from "../styled/colors";
 
 const AdminPanelWrapper = styled.div`
   background-color: ${colors.gray};
-  border-radius: 10px;
+  border-radius: 5px;
   margin: 10px;
-  padding: 20px;
-  width: fit-content;
+  padding: 10px;
+  width: 95%;
+
   form {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
   }
-  button {
-    margin-top: 20px;
-  }
+
   section {
-    width: 100%;
     text-align: left;
     padding: 10px;
+  }
+  button {
+    align-items: center;
+    justify-content: center;
+  }
+  i {
+    margin: 0px 5px;
   }
 `;
 

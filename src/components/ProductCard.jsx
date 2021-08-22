@@ -28,8 +28,12 @@ function ProductCard({ product }) {
         <img alt={product.name} src={product.imageUrl ? product.imageUrl : productImage}></img>
       </div>
       <div>
-        {product.category && <p className="reward">{product.category.rewardAmount.toFixed(2) + " TL Hediye 🎁"}</p>}
-        <p className="price">{"Fiyat: " + product.price.toFixed(2) + " TL"}</p>
+        {(product.category && product.category.rewardAmount) > 0 && (
+          <p className="reward">{product.category.rewardAmount.toFixed(2) + " ₺ Hediye 🎁"}</p>
+        )}
+        <p className="price">{"Fiyat: " + product.price.toFixed(2) + " ₺"}</p>
+      </div>
+      <div>
         {isProductInCart ? (
           <div className="cart-btn red" onClick={handleRemove}>
             Sepetten Çıkar <i className="fas fa-trash fa-lg" />

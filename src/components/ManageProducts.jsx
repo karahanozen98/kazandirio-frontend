@@ -1,95 +1,97 @@
 import React from "react";
-import { TextField, Button, FormHelperText, Select, MenuItem } from "@material-ui/core";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Open, severities } from "../redux/toast";
-import { GetCategories } from "../api/CategorySevice";
-import { CreateProduct } from "../api/ProductService";
+import { DeleteProduct, GetProducts, UpdateProduct } from "../api/ProductService";
 import { useEffect } from "react";
-import AdminPanelWrapper from "../styled/AdminPanelWrapper";
+import TableWrapper from "../styled/TableWrapper";
+import CreateNewProduct from "./CreateNewProduct";
+import ProductTable from "./ProductTable";
+
+const initialProduct = { id: null, name: null, price: null, imageUrl: null, categoryId: null };
 
 function ManageProducts() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
-  const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState(0);
-  const [imageUrl, setImageUrl] = useState("");
+  const searchFilter = useSelector((state) => state.search.value);
+  const [products, setProducts] = useState([]);
+  const [editingProduct, setEditingProduct] = useState(initialProduct);
+  const [trigger, setTrigger] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await GetCategories(token);
-      if (!response.error) setCategories(response.data);
-      else dispatch(Open({ message: "Kategorilere ulaşılamadı", severity: severities.warning }));
+      const response = await GetProducts(token);
+      if (!response.error) setProducts(response.data);
+      else dispatch(Open({ message: response.data, severity: severities.error }));
+      setLoading(false);
     };
     fetchData();
-  }, [dispatch,token]);
+  }, [dispatch, token, trigger]);
 
-  const handleSubmit = async () => {
-    if (!name) {
-      dispatch(Open({ message: "Kategori ismi boş bırakılamaz", severity: severities.warning }));
-      return;
-    }
-    if (price < 0) {
-      dispatch(Open({ message: "Hediye puanı sıfırdan küçük olamaz", severity: severities.warning }));
-      return;
-    }
-
-    const response = await CreateProduct(token, { name, price, categoryId, imageUrl });
+  const handleSave = async () => {
+    const newProduct = {
+      id: editingProduct.id,
+      name: editingProduct.name,
+      price: +editingProduct.price,
+      categoryId: editingProduct.categoryId,
+      imageUrl: editingProduct.imageUrl,
+    };
+    const response = await UpdateProduct(token, newProduct);
     if (!response.error) {
-      dispatch(Open({ message: "Ürün oluşturuldu", severity: severities.success }));
-      setName("");
-      setPrice(0);
-      setCategoryId(0);
+      dispatch(Open({ message: "Ürün başarıyla güncellendi", severity: severities.success }));
+      setTrigger(Math.random());
     } else dispatch(Open({ message: response.data, severity: severities.error }));
+    setEditingProduct(initialProduct);
+  };
+
+  const handleDelete = async (productId) => {
+    const response = await DeleteProduct(token, productId);
+    if (!response.error) {
+      dispatch(Open({ message: "Ürün başarıyla silindi", severity: severities.success }));
+      setTrigger(Math.random());
+    } else {
+      dispatch(Open({ message: response.data, severity: severities.error }));
+    }
   };
 
   return (
-    <AdminPanelWrapper>
-      <h2>Yeni Ürün Oluştur</h2>
-      <form>
-        <section>
-          <FormHelperText>Ürün Adı</FormHelperText>
-          <TextField value={name} placeholder="Ürün Adı" onChange={(e) => setName(e.target.value)}></TextField>
-        </section>
-        <section>
-          <FormHelperText>Ürün Fiyatı (TL)</FormHelperText>
-          <TextField
-            value={price}
-            type="number"
-            InputProps={{
-              inputProps: {
-                min: 0,
-                step: 0.01,
-              },
-            }}
-            onChange={(e) => setPrice(e.target.value)}
-          ></TextField>
-        </section>
-        <section>
-          <FormHelperText>Görsel Url'sini yapıştır</FormHelperText>
-          <TextField placeholder="Ürün Görseli" onChange={(e) => setImageUrl(e.target.value)} />
-        </section>
-
-        <section>
-          <FormHelperText>Kategori Seçimi Yapın</FormHelperText>
-          <Select style={{ width: "100%" }} value={0} onChange={(e) => setCategoryId(e.target.value)}>
-            <MenuItem value={0}>{"   Kategori Yok   "}</MenuItem>
-            {categories.map((category) => {
-              return (
-                <MenuItem key={category.id} value={category.id}>
-                  {category.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </section>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Kaydet
-        </Button>
-      </form>
-    </AdminPanelWrapper>
+    <div>
+      <CreateNewProduct />
+      {loading ? (
+        <h1>Ürünler Yükleniyor</h1>
+      ) : (
+        <TableWrapper>
+          <table>
+            <thead>
+              <tr>
+                <th>Ürün adı</th>
+                <th>Fiyat</th>
+                <th>Ürün Görseli</th>
+                <th>Kategori Bilgisi</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => {
+                if (product.name.includes(searchFilter))
+                  return (
+                    <ProductTable
+                      key={product.id}
+                      product={product}
+                      editingProduct={editingProduct}
+                      setEditingProduct={setEditingProduct}
+                      handleSave={handleSave}
+                      handleDelete={handleDelete}
+                    />
+                  );
+                else return null;
+              })}
+            </tbody>
+          </table>
+        </TableWrapper>
+      )}
+    </div>
   );
 }
 export default ManageProducts;

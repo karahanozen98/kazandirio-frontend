@@ -21,7 +21,7 @@ async function GetProducts(token) {
 }
 
 async function CreateProduct(token, product) {
-  if(product.categoryId === 0) product.categoryId = undefined
+  if (product.categoryId === 0) product.categoryId = undefined;
   try {
     const response = await fetch(`${apiUrl}/products`, {
       method: "POST",
@@ -44,4 +44,40 @@ async function CreateProduct(token, product) {
   }
 }
 
-export { GetProducts, CreateProduct };
+async function UpdateProduct(token, product) {
+  try {
+    const response = await fetch(`${apiUrl}/products`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...product }),
+    });
+    if (response.status === 200) return { error: false, data: await response.json() };
+    else return { error: true, data: "Ürün güncellenemedi" };
+  } catch (err) {
+    console.log(err);
+    return { error: true, data: "Bilinmeyen bir hata oluştu" };
+  }
+}
+
+async function DeleteProduct(token, productId) {
+  try {
+    const response = await fetch(`${apiUrl}/products`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ productId }),
+    });
+    if (response.status === 200) return { error: false, data: await response.json() };
+    else return { error: true, data: "Ürün Silinemedi" };
+  } catch (err) {
+    console.log(err);
+    return { error: true, data: "Bilinmeyen bir hata oluştu" };
+  }
+}
+
+export { GetProducts, CreateProduct, UpdateProduct, DeleteProduct };

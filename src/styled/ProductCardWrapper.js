@@ -11,7 +11,7 @@ const ProductCardWrapper = styled.div`
   box-shadow: 5px 5px 15px 5px rgb(136, 136, 136, 0.8);
   min-width: 200px;
   max-width: 400px;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 15px;
   margin: 10px;
 
@@ -57,11 +57,14 @@ const ProductCardWrapper = styled.div`
     user-select: none; /* Standard */
     text-align: center;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
     &:active {
       transform: scale(1.02);
     }
+  }
+  @media (max-width:600px){
+    min-width: 80%;
   }
 `;
 

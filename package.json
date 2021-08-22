@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "prettier": {
-    "printWidth": 120
+    "printWidth": 150
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",
