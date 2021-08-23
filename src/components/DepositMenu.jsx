@@ -22,7 +22,7 @@ function DepositMenu() {
   const user = useSelector((state) => state.user);
 
   const handleDeposit = async (amount) => {
-    const response = await UpdateBalance(user.token, user.id, amount);
+    const response = await UpdateBalance(user.id, amount);
     if (!response.error) {
       dispatch(Open({ message: "İşlem başarılı", severity: severities.success }));
       dispatch(setUser({ ...user, balance: user.balance + amount }));

@@ -1,12 +1,9 @@
-const apiUrl = process.env.REACT_APP_SERVICE_URI ? process.env.REACT_APP_SERVICE_URI : null;
+import CustomRequest from "./CustomRequest";
 
 async function Login(username, password) {
   try {
-    const response = await fetch(`${apiUrl}/users/login`, {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-    });
+    const request = CustomRequest("users/login", "POST", { username, password });
+    const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) return { error: false, data: data };
     else if (response.status === 400) {
@@ -20,12 +17,8 @@ async function Login(username, password) {
 
 async function Signup(username, password) {
   try {
-    const response = await fetch(`${apiUrl}/users`, {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: { "Content-Type": "application/json" },
-    });
-
+    const request = CustomRequest("users", "POST", { username, password });
+    const response = await fetch(request);
     if (response.status === 200) return { error: false, data: "Ok" };
     else if (response.status === 400) {
       const data = await response.json();
@@ -38,11 +31,8 @@ async function Signup(username, password) {
 
 async function LoginWithToken(token) {
   try {
-    const response = await fetch(`${apiUrl}/users/authorize`, {
-      method: "POST",
-      body: JSON.stringify({ token }),
-      headers: { "Content-Type": "application/json" },
-    });
+    const request = CustomRequest("users/authorize", "POST", { token });
+    const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) return { error: false, data: data };
     else if (response.status === 400) return { error: true, data: data };
@@ -51,12 +41,10 @@ async function LoginWithToken(token) {
   }
 }
 
-async function GetAllUsers(token) {
+async function GetAllUsers() {
   try {
-    const response = await fetch(`${apiUrl}/users`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-    });
+    const request = CustomRequest("users", "GET");
+    const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) return { error: false, data: data };
     else if (response.status === 400) {
@@ -68,16 +56,10 @@ async function GetAllUsers(token) {
   }
 }
 
-async function UpdateUser(token, user) {
+async function UpdateUser(user) {
   try {
-    const response = await fetch(`${apiUrl}/users`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ ...user }),
-    });
+    const request = CustomRequest("users", "PUT", { ...user });
+    const response = await fetch(request);
     if (response.status === 200)
       return { error: false, data: "İşleminiz başarıyla gerçekleşti. Değişikliklerin görüntülenmesi biraz zaman alabilir." };
     else return { error: true, data: "Kullanıcı bilgileri güncellenemedi" };
@@ -87,16 +69,10 @@ async function UpdateUser(token, user) {
   }
 }
 
-async function UpdateBalance(token, userId, amount) {
+async function UpdateBalance(userId, amount) {
   try {
-    const response = await fetch(`${apiUrl}/users/deposit`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ userId, amount }),
-    });
+    const request = CustomRequest("users/deposit", "PUT", { userId, amount });
+    const response = await fetch(request);
     if (response.status === 200) return { error: false, data: "İşleminiz başarıyla gerçekleşti" };
     else return { error: true, data: await response.json() };
   } catch (err) {

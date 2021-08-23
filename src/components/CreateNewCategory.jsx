@@ -1,13 +1,12 @@
 import React from "react";
 import { TextField, Button, FormHelperText } from "@material-ui/core";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Open, severities } from "../redux/toast";
 import AdminPanelWrapper from "../styled/AdminPanelWrapper";
 import { CreateCategory } from "../api/CategorySevice";
 
 function CreateNewCategory() {
-  const token = useSelector((state) => state.user.token);
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [rewardAmount, setRewardAmount] = useState(0);
@@ -25,7 +24,7 @@ function CreateNewCategory() {
       dispatch(Open({ message: "Hediye puanı sıfırdan küçük olamaz.", severity: severities.warning }));
       return;
     }
-    const response = await CreateCategory(token, { name, rewardAmount });
+    const response = await CreateCategory({ name, rewardAmount });
     if (!response.error) {
       dispatch(Open({ message: "İşlem başarılı", severity: severities.success }));
     } else dispatch(Open({ message: response.data, severity: severities.error }));

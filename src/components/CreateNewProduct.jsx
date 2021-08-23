@@ -1,7 +1,7 @@
 import React from "react";
 import { TextField, Button, FormHelperText, Select, MenuItem } from "@material-ui/core";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Open, severities } from "../redux/toast";
 import { GetCategories } from "../api/CategorySevice";
 import { CreateProduct } from "../api/ProductService";
@@ -10,7 +10,6 @@ import AdminPanelWrapper from "../styled/AdminPanelWrapper";
 
 function CreateNewProduct() {
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.user.token);
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [categories, setCategories] = useState([]);
@@ -19,12 +18,12 @@ function CreateNewProduct() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await GetCategories(token);
+      const response = await GetCategories();
       if (!response.error) setCategories(response.data);
       else dispatch(Open({ message: "Kategorilere ulaşılamadı", severity: severities.warning }));
     };
     fetchData();
-  }, [dispatch, token]);
+  }, [dispatch]);
 
   const handleSubmit = async () => {
     if (!name) {
@@ -36,7 +35,7 @@ function CreateNewProduct() {
       return;
     }
 
-    const response = await CreateProduct(token, { name, price, categoryId, imageUrl });
+    const response = await CreateProduct({ name, price, categoryId, imageUrl });
     if (!response.error) {
       dispatch(Open({ message: "Ürün oluşturuldu", severity: severities.success }));
       setName("");

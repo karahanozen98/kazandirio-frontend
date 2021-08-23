@@ -1,14 +1,9 @@
-const apiUrl = process.env.REACT_APP_SERVICE_URI ? process.env.REACT_APP_SERVICE_URI : null;
+import CustomRequest from "./CustomRequest";
 
-async function GetCategories(token) {
+async function GetCategories() {
   try {
-    const response = await fetch(`${apiUrl}/categories`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const request = CustomRequest("categories", "GET");
+    const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) {
       return { error: false, data: data };
@@ -20,25 +15,14 @@ async function GetCategories(token) {
   }
 }
 
-async function CreateCategory(token, category) {
+async function CreateCategory(category) {
   try {
-    const response = await fetch(`${apiUrl}/categories`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: category.name,
-        rewardAmount: +category.rewardAmount,
-      }),
-    });
-    const data = await response.json();
-
+    const request = CustomRequest("categories", "POST", { name: category.name, rewardAmount: +category.rewardAmount });
+    const response = await fetch(request);
     if (response.status === 200) {
-      return { error: false, data: data };
+      return { error: false, data: "İşlem başarılı" };
     }
-    return { error: true, data: data };
+    return { error: true, data: await response.json() };
   } catch (err) {
     return { error: true, data: "Bilinmeyen bir hata oluştu" };
   }

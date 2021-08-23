@@ -15,6 +15,7 @@ export default function AuthProvider({ children }) {
           dispatch(setUser({ ...response.data }));
         } else {
           console.log(response.error, response.data);
+          localStorage.removeItem("authtoken");
         }
         setLoading(false);
       }

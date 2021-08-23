@@ -45,7 +45,7 @@ function PaymentModal() {
       return;
     }
     const productList = shoppingCart.items.map((item) => item.id);
-    const response = await PayWithBalance(user.token, user.id, productList);
+    const response = await PayWithBalance(user.id, productList);
 
     if (!response.error) {
       cleanUpAfterPayment();
@@ -58,7 +58,7 @@ function PaymentModal() {
       return;
     }
     const productList = shoppingCart.items.map((item) => item.id);
-    const response = await PayWithRewards(user.token, user.id, productList);
+    const response = await PayWithRewards(user.id, productList);
 
     if (!response.error) {
       cleanUpAfterPayment();

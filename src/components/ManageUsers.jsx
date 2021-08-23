@@ -12,7 +12,6 @@ const initalUser = { id: null, username: null, role: null, balance: null, reward
 function ManageUsers() {
   const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
-  const token = useSelector((state) => state.user.token);
   const searchFilter = useSelector((state) => state.search.value);
   const [editingUser, setEditingUser] = useState(initalUser);
   const [trigger, setTrigger] = useState(null);
@@ -20,13 +19,13 @@ function ManageUsers() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await GetAllUsers(token);
+      const response = await GetAllUsers();
       if (!response.error) setUsers(response.data);
       else dispatch(Open({ message: response.data, severity: severities.error }));
       setLoading(false);
     };
     fetchData();
-  }, [dispatch, token, trigger]);
+  }, [dispatch, trigger]);
 
   const handleSave = async () => {
     const newUser = {
@@ -36,7 +35,7 @@ function ManageUsers() {
       balance: +editingUser.balance,
       rewards: +editingUser.rewards,
     };
-    const response = await UpdateUser(token, newUser);
+    const response = await UpdateUser(newUser);
     if (!response.error) {
       dispatch(Open({ message: response.data, severity: severities.success }));
       setTrigger(Math.random());

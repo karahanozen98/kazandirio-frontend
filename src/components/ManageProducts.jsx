@@ -37,7 +37,7 @@ function ManageProducts() {
       categoryId: editingProduct.categoryId,
       imageUrl: editingProduct.imageUrl,
     };
-    const response = await UpdateProduct(token, newProduct);
+    const response = await UpdateProduct(newProduct);
     if (!response.error) {
       dispatch(Open({ message: "Ürün başarıyla güncellendi", severity: severities.success }));
       setTrigger(Math.random());
@@ -46,7 +46,7 @@ function ManageProducts() {
   };
 
   const handleDelete = async (productId) => {
-    const response = await DeleteProduct(token, productId);
+    const response = await DeleteProduct(productId);
     if (!response.error) {
       dispatch(Open({ message: "Ürün başarıyla silindi", severity: severities.success }));
       setTrigger(Math.random());

@@ -1,15 +1,11 @@
-const apiUrl = process.env.REACT_APP_SERVICE_URI ? process.env.REACT_APP_SERVICE_URI : null;
+import CustomRequest from "./CustomRequest";
 
-async function GetProducts(token) {
+async function GetProducts() {
   try {
-    const response = await fetch(`${apiUrl}/products`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const request = CustomRequest("products", "GET");
+    const response = await fetch(request);
     const data = await response.json();
+
     if (response.status === 200) {
       return { error: false, data: data };
     } else if (response.status === 400) {
@@ -20,23 +16,18 @@ async function GetProducts(token) {
   }
 }
 
-async function CreateProduct(token, product) {
+async function CreateProduct(product) {
   if (product.categoryId === 0) product.categoryId = undefined;
   try {
-    const response = await fetch(`${apiUrl}/products`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: product.name,
-        price: +product.price,
-        categoryId: product.categoryId,
-        imageUrl: product.imageUrl,
-      }),
+    const request = CustomRequest("products", "POST", {
+      name: product.name,
+      price: +product.price,
+      categoryId: product.categoryId,
+      imageUrl: product.imageUrl,
     });
-    if (response.status === 200) return { error: false, data: await response.json() };
+    const response = await fetch(request);
+
+    if (response.status === 200) return { error: false, data: "İşlem başarılı" };
     else return { error: true, data: "Ürün oluşturulamadı" };
   } catch (err) {
     console.log(err);
@@ -44,17 +35,11 @@ async function CreateProduct(token, product) {
   }
 }
 
-async function UpdateProduct(token, product) {
+async function UpdateProduct(product) {
   try {
-    const response = await fetch(`${apiUrl}/products`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ ...product }),
-    });
-    if (response.status === 200) return { error: false, data: await response.json() };
+    const request = CustomRequest("products", "PUT", { ...product });
+    const response = await fetch(request);
+    if (response.status === 200) return { error: false, data: "İşlem başarılı" };
     else return { error: true, data: "Ürün güncellenemedi" };
   } catch (err) {
     console.log(err);
@@ -62,17 +47,12 @@ async function UpdateProduct(token, product) {
   }
 }
 
-async function DeleteProduct(token, productId) {
+async function DeleteProduct(productId) {
   try {
-    const response = await fetch(`${apiUrl}/products`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ productId }),
-    });
-    if (response.status === 200) return { error: false, data: await response.json() };
+    const request = CustomRequest("products", "DELETE", { productId });
+    const response = await fetch(request);
+
+    if (response.status === 200) return { error: false, data: "İşlem başarılı" };
     else return { error: true, data: "Ürün Silinemedi" };
   } catch (err) {
     console.log(err);

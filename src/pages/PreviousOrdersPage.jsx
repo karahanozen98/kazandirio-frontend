@@ -17,7 +17,7 @@ function PreviousOrders() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await GetPreviousOrders(user.token, user.id);
+      const response = await GetPreviousOrders(user.id);
       if (!response.error) setProducts(response.data);
       setLoading(false);
     };
